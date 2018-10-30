@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        .demo {
+            /* background-image: paint(hover); */
+            width: 500px;
+            height: 500px;
+            border: 1px solid #CCC;
+        }
+
+        #overdraw {
+            --border-width: 50;
+
+            border-style: solid;
+            border-width: calc(var(--border-width) * 1px);
+
+            border-image-source: paint(overdraw);
+            border-image-slice: 0 fill;
+            border-image-outset: calc(var(--border-width) * 1px);
+
+            width: 200px;
+            height: 200px;
+        }
+
+        #demo {
+            background-image: paint(sample);
+            width: 500px;
+            height: 500px;
+            border: 1px solid #CCC;
+            --circle-color: #CCC;
+            --circle-color: blue;
+
+
+        }
+    </style>
+</head>
+
+<body>
+    <textarea id="demo"></textarea>
+    <!-- <div id="overdraw"></div> -->
+
+    <!-- <div class="demo"></textarea> -->
+</body>
+<script>
+    CSS.registerProperty({
+        name: '--circle-color',
+        syntax: '<color>',
+        initialValue: 'black',
+        inherits: false
+    });
+    CSS.paintWorklet.addModule('paintworklet.js');
+</script>
+
+</html>

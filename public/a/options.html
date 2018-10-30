@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<!-- saved from url=(0056)https://animation-worklet-article.glitch.me/options.html -->
+<html>
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <style>
+    div {
+      width: 200px;
+      height: 200px;
+      background-color: hotpink;
+      margin-bottom: 10px;
+      border-radius: 10%;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="a">
+  </div>
+  <div id="b">
+  </div>
+
+  <script language="javascript+animationworklet">
+    registerAnimator('factor', class {
+      constructor(options = {}) {
+        this.factor = options.factor || 1;
+      }
+      animate(currentTime, effect) {
+        console.log(currentTime, effect)
+        effect.localTime = currentTime * this.factor;
+      }
+    });
+  </script>
+  <script>
+    if (!('animationWorklet' in CSS)) {
+      document.write("You need AnimationWorklet to see this demo :(");
+    }
+
+    function urlFromTag(sel) {
+      const el = document.querySelector(sel);
+      if (!el) {
+        throw new Error("Couldn’t find element");
+      }
+      const blob = new Blob([el.textContent], { type: "text/javascript" });
+      return URL.createObjectURL(blob);
+    }
+    async function init() {
+      await CSS.animationWorklet.addModule(urlFromTag("script[language='javascript+animationworklet']"));
+
+      new WorkletAnimation(
+        'factor',
+        new KeyframeEffect(
+          document.querySelector('#a'),
+          [
+            {
+              transform: 'translateX(0)'
+            },
+            {
+              transform: 'translateX(500px)'
+            }
+          ],
+          {
+            duration: 2000,
+            iterations: Number.POSITIVE_INFINITY
+          }
+        ),
+        document.timeline
+      ).play();
+
+      new WorkletAnimation(
+        'factor',
+        new KeyframeEffect(
+          document.querySelector('#b'),
+          [
+            {
+              transform: 'translateX(0)'
+            },
+            {
+              transform: 'translateX(500px)'
+            }
+          ],
+          {
+            duration: 2000,
+            iterations: Number.POSITIVE_INFINITY
+          }
+        ),
+        document.timeline,
+        { factor: 0.5 }
+      ).play();
+    }
+    init();
+  </script>
+</body>
+
+</html>

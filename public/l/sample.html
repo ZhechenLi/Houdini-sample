@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Layout Sample</title>
+    <style>
+        main {
+            width: 500px;
+            /* height: 500px; */
+            outline: 1px solid black;
+
+            display: layout(blocklike);
+        }
+
+        div {
+            background-color: hotpink;
+            border: 3px solid rebeccapurple;
+            box-sizing: border-box;
+            height: 250px;
+            margin: 100px;
+            padding: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <main>
+        <div>A</div>
+        <div>B</div>
+        <!-- <div>C</div>
+        <div>D</div> -->
+    </main>
+</body>
+<script language="javascript+layout">
+    registerLayout("blocklike", class {
+        static get childInputProperties() {
+            return ['margin-left', 'margin-right', 'margin-top', 'margin-bottom'];
+        }
+        // currently: all children are blockified
+        * intrinsicSizes(children, edges, styleMap) {
+                // debugger
+            }
+            * layout(children, edges, constraintSpace, styles) {
+                console.log(children, edges, constraintSpace, styles);
+                const childFragments = []
+                for (const child of children) {
+                    const childFragment = yield child.layoutNextFragment();
+                    childFragments.push(childFragment);
+                }
+                console.log(childFragments)
+                // debugger
+                childFragments[1].blockOffset = childFragments[0].blockSize + children[0].styleMap.get(
+                    'margin-right').value
+                childFragments[1].inlineOffset = childFragments[0].inlineSize + children[0].styleMap.get(
+                    'margin-bottom').value
+                // debugger
+                return {
+                    autoBlockSize: childFragments[1].blockSize + childFragments[0].blockSize + children[0].styleMap
+                        .get(
+                            'margin-bottom').value,
+                    childFragments
+                };
+            }
+    });
+</script>
+<script>
+    if (!('layoutWorklet' in CSS)) {
+        document.write('You need Custom Layout for this demo :(');
+    }
+
+    function urlFromTag(sel) {
+        const el = document.querySelector(sel);
+        if (!el) {
+            throw new Error("Couldn’t find element");
+        }
+        const blob = new Blob([el.textContent], {
+            type: "text/javascript"
+        });
+        return URL.createObjectURL(blob);
+    }
+    async function init() {
+        await CSS.layoutWorklet.addModule(urlFromTag("script[language='javascript+layout']"));
+    }
+    init();
+</script>
+
+</html>

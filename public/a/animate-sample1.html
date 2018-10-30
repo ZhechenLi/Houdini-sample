@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<!-- saved from url=(0057)https://animation-worklet-article.glitch.me/scroller.html -->
+<html>
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>高性能视差滚动</title>
+  <style>
+    body {
+      font-family: Helvetica;
+    }
+
+    div {
+      width: 200px;
+      height: 200px;
+      background-color: hotpink;
+      margin-bottom: 10px;
+      border-radius: 10%;
+
+      /* margin-top: 60%; */
+    }
+
+
+    div:nth-child(2) {
+      background-color: blue;
+    }
+
+    div:nth-child(3) {
+      background-color: aliceblue;
+    }
+
+    div:not(:first-child) {
+      margin-top: -130px;
+      /* box-shadow: 12px -9px 5px 3px #86777766; */
+    }
+
+    main {
+      width: 200px;
+      height: 200px;
+      border: 1px solid black;
+      overflow: auto
+    }
+
+    @keyframes progress {
+      from {
+        width: 0vw;
+      }
+
+      to {
+        width: 100vw;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- <div id="progress"></div> -->
+  <div id="a"></div>
+  <div id="b"></div>
+  <div id="c"></div>
+  <main>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+    scroll me<br>
+  </main>
+  <script language="javascript+animationworklet">
+    registerAnimator('passthrough', class {
+      animate(currentTime, effect) {
+        console.log(currentTime, effect)
+        effect.localTime = currentTime;
+      }
+    });
+
+    registerAnimator('passthroughslow', class {
+      animate(currentTime, effect) {
+        effect.localTime = 0.8 * currentTime;
+      }
+    });
+
+    registerAnimator('passthroughslowest', class {
+      animate(currentTime, effect) {
+        effect.localTime = 0.5 * currentTime;
+      }
+    });
+
+
+  </script>
+  <script>
+    if (!('animationWorklet' in CSS)) {
+      document.write("You need AnimationWorklet to see this demo :(");
+    }
+
+    function urlFromTag(sel) {
+      const el = document.querySelector(sel);
+      if (!el) {
+        throw new Error("Couldn’t find element");
+      }
+      const blob = new Blob([el.textContent], { type: "text/javascript" });
+      return URL.createObjectURL(blob);
+    }
+
+    CSS.animationWorklet.addModule(urlFromTag("script[language='javascript+animationworklet']"));
+
+    new WorkletAnimation(
+      'passthrough',
+      new KeyframeEffect(
+        document.querySelector('#a'),
+        [
+          {
+            transform: 'translateX(0)'
+          },
+          {
+            transform: 'translateX(1000px)'
+          }
+        ],
+        {
+          duration: 2000,
+          fill: 'both'
+        }
+      ),
+      new ScrollTimeline({
+        scrollSource: document.querySelector('main'),
+        orientation: "vertical", // "horizontal" or "vertical".
+        timeRange: 2000,
+      })
+    ).play();
+
+    new WorkletAnimation(
+      'passthroughslow',
+      new KeyframeEffect(
+        document.querySelector('#b'),
+        [
+          {
+            transform: 'translateX(0)'
+          },
+          {
+            transform: 'translateX(1000px)'
+          }
+        ],
+        {
+          duration: 2000,
+          fill: 'both'
+        }
+      ),
+      new ScrollTimeline({
+        scrollSource: document.querySelector('main'),
+        orientation: "vertical", // "horizontal" or "vertical".
+        timeRange: 2000,
+      })
+    ).play();
+
+
+    new WorkletAnimation(
+      'passthroughslowest',
+      new KeyframeEffect(
+        document.querySelector('#c'),
+        [
+          {
+            transform: 'translateX(0)'
+          },
+          {
+            transform: 'translateX(1000px)'
+          }
+        ],
+        {
+          duration: 2000,
+          fill: 'both'
+        }
+      ),
+      new ScrollTimeline({
+        scrollSource: document.querySelector('main'),
+        orientation: "vertical", // "horizontal" or "vertical".
+        timeRange: 2000,
+      })
+    ).play();
+
+  </script>
+</body>
+
+</html>
