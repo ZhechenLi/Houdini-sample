@@ -1,5 +1,4 @@
-var HtmlWebpackPlugin = require("html-webpack-plugin");
-var path = require("path");
+const path = require("path");
 
 module.exports = {
   entry: "./src/index",
@@ -7,10 +6,10 @@ module.exports = {
     filename: "./dist/bundle.js"
   },
   devServer: {
+    open: true,
     contentBase: path.join(__dirname, "public"),
     compress: true,
-    port: 9001
-    // https: true
+    port: 9001,
+    https: true
   }
-  //   plugins: [new HtmlWebpackPlugin()]
 };
