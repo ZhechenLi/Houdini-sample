@@ -1,10 +1,6 @@
 const path = require("path");
-
+// TODO: use another static server
 module.exports = {
-  entry: "./src/index",
-  output: {
-    filename: "./dist/bundle.js"
-  },
   devServer: {
     open: true,
     contentBase: path.join(__dirname, "public"),
