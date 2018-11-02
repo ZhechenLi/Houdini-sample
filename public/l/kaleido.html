@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Layout Sample</title>
+    <style>
+        main {
+            width: 500px;
+            height: 700px;
+            outline: 1px solid black;
+            display: layout(alignMiddle);
+            margin-left: 100px;
+        }
+
+        div {
+
+            background-color: hotpink;
+            border: 3px solid rebeccapurple;
+            box-sizing: border-box;
+            width: 250px;
+            height: 200px;
+            margin: 100px;
+            padding: 20px;
+        }
+
+        .btn {
+            position: fixed;
+        }
+
+        .btn:nth-of-type(1) {
+            top: 2em;
+            left: 2em;
+        }
+
+        .btn:nth-of-type(2) {
+            top: 4em;
+            left: 2em;
+        }
+
+        .btn:nth-of-type(3) {
+            top: 6em;
+            left: 2em;
+        }
+    </style>
+</head>
+
+<body>
+    <main>
+        <div>A</div>
+    </main>
+    <button class="btn">按我改变容器大小</button>
+    <button class="btn">按我改变子元素大小</button>
+    <button class="btn">鬼畜模式</button>
+</body>
+<script language="javascript+layout">
+    registerLayout("alignMiddle", class {
+
+        * intrinsicSizes(children, edges, styleMap) {}
+
+        * layout(children, edges, constraintSpace, styles) {
+            const childFragments = []
+            for (const child of children) {
+                const childFragment = yield child.layoutNextFragment();
+                childFragments.push(childFragment);
+            }
+            const {
+                inlineSize,
+                blockSize
+            } = childFragments[0]
+
+            const {
+                fixedBlockSize,
+                fixedInlineSize
+            } = constraintSpace
+
+            childFragments[0].blockOffset = (fixedBlockSize - blockSize) / 2
+            childFragments[0].inlineOffset = (fixedInlineSize - inlineSize) / 2
+
+            return {
+                // only the first element will be mount
+                childFragments: childFragments
+            };
+        }
+    });
+</script>
+<script>
+    if (!('layoutWorklet' in CSS)) {
+        document.write('You need Custom Layout for this demo :(');
+    }
+
+    function urlFromTag(sel) {
+        const el = document.querySelector(sel);
+        if (!el) {
+            throw new Error("Couldn’t find element");
+        }
+        const blob = new Blob([el.textContent], {
+            type: "text/javascript"
+        });
+        return URL.createObjectURL(blob);
+    }
+    async function init() {
+        await CSS.layoutWorklet.addModule(urlFromTag("script[language='javascript+layout']"));
+        CSS.layoutWorklet.addModule("kaleido.js");
+
+    }
+    init();
+</script>
+<script>
+    const btnDaddy = document.querySelector('.btn:nth-of-type(1)')
+    const btnPuppy = document.querySelector('.btn:nth-of-type(2)')
+    const btnLanLanLu = document.querySelector('.btn:nth-of-type(3)')
+    const Daddy = document.querySelector('main')
+    const Puppy = document.querySelector('main > div')
+
+    let PuppyWidth = 250,
+        PuppyHeight = 200,
+        DaddyWidth = 500,
+        DaddyHeight = 700;
+
+    btnDaddy.addEventListener('click', e => {
+
+
+        DaddyWidth = Math.random() * 300 + PuppyWidth
+        DaddyHeight = Math.random() * 300 + PuppyHeight
+
+        Daddy.style.width = `${DaddyWidth}px`;
+        Daddy.style.height = `${DaddyHeight}px`;
+    })
+
+    btnPuppy.addEventListener('click', e => {
+        PuppyWidth = Math.random() * DaddyWidth
+        PuppyHeight = Math.random() * DaddyHeight
+        Puppy.style.width = `${PuppyWidth}px`;
+        Puppy.style.height = `${PuppyHeight}px`;
+    })
+
+    btnLanLanLu.addEventListener('click', e => {
+        let count = 0;
+        const closeTimer = setInterval(() => {
+            count++;
+
+            PuppyWidth = Math.random() * DaddyWidth
+            PuppyHeight = Math.random() * DaddyHeight
+            DaddyWidth = Math.random() * 300 + PuppyWidth
+            DaddyHeight = Math.random() * 300 + PuppyHeight
+            if (PuppyHeight > DaddyHeight || PuppyWidth > DaddyWidth) {
+                debugger
+            }
+            Puppy.style.width = `${PuppyWidth}px`;
+            Puppy.style.height = `${PuppyHeight}px`;
+            Daddy.style.width = `${DaddyWidth}px`;
+            Daddy.style.height = `${DaddyHeight}px`;
+            if (count > 19) {
+                clearInterval(closeTimer)
+            }
+        }, 50)
+    })
+</script>
+
+</html>
